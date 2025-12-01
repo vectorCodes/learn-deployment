@@ -71,55 +71,14 @@ jobs:
         with:
           channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
           slack-message: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Deployment Status:* ${{ job.status }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Version:* `${{ github.event.before }}` → `${{ github.sha }}`"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Message:* ${{ github.event.head_commit.message }}"
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Commit ID:* `${{ github.sha }}`"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Committed by:*\n${{ github.actor }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Runner ID:*\n${{ runner.name }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Approved by:*\n${{ github.triggering_actor }}"
-                    }
-                  ]
-                }
-              ]
-            }
+            Status: ${{ job.status }}
+            Version: ${{ github.event.before }} → ${{ github.sha }}
+            Message: ${{ github.event.head_commit.message }}
+            Commit ID: ${{ github.sha }}
+            Committed by: ${{ github.actor }}
+            Runner ID: ${{ runner.name }}
+            Approved by: ${{ github.triggering_actor }}
+
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
