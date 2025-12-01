@@ -1,35 +1,27 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import App from './App'
 
 describe('App', () => {
-  it('renders the heading', () => {
+  it('renders the Hero component with correct title', () => {
     render(<App />)
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Vite + React')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Build Something Amazing')
   })
 
-  it('renders the counter button with initial count of 0', () => {
+  it('renders the Hero subtitle', () => {
     render(<App />)
-    expect(screen.getByRole('button')).toHaveTextContent('count is 0')
+    expect(screen.getByText(/modern React application powered by Vite/i)).toBeInTheDocument()
   })
 
-  it('increments the counter when button is clicked', () => {
+  it('renders Get Started and Learn More buttons', () => {
     render(<App />)
-    const button = screen.getByRole('button')
-
-    fireEvent.click(button)
-    expect(button).toHaveTextContent('count is 1')
-
-    fireEvent.click(button)
-    expect(button).toHaveTextContent('count is 2')
+    expect(screen.getByRole('link', { name: 'Get Started' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Learn More' })).toBeInTheDocument()
   })
 
-  it('renders Vite and React logo links', () => {
+  it('renders buttons with correct links', () => {
     render(<App />)
-    const links = screen.getAllByRole('link')
-
-    expect(links).toHaveLength(2)
-    expect(links[0]).toHaveAttribute('href', 'https://vite.dev')
-    expect(links[1]).toHaveAttribute('href', 'https://react.dev')
+    expect(screen.getByRole('link', { name: 'Get Started' })).toHaveAttribute('href', '#get-started')
+    expect(screen.getByRole('link', { name: 'Learn More' })).toHaveAttribute('href', '#learn-more')
   })
 })
