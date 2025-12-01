@@ -50,15 +50,14 @@ jobs:
           CI: true
 
   deploy:
-     name: Deplot to renderer
-     runs-on: ubuntu-latest
-     needs: ci
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: ci
 
-
-     steps:
-      - name : Trigger Render Deploy
+    steps:
+      - name: Trigger Render Deploy
         run: |
-           curl -X POST \
+          curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
@@ -66,5 +65,61 @@ jobs:
             }' \
             https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploys
 
-       
+      - name: Notify Slack
+        if: always()
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+          slack-message: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Deployment Status:* ${{ job.status }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Version:* `${{ github.event.before }}` → `${{ github.sha }}`"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Message:* ${{ github.event.head_commit.message }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Commit ID:* `${{ github.sha }}`"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Committed by:*\n${{ github.actor }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Runner ID:*\n${{ runner.name }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Approved by:*\n${{ github.triggering_actor }}"
+                    }
+                  ]
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
